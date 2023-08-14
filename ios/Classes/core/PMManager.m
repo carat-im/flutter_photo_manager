@@ -849,7 +849,7 @@
             return;
         }
 
-        NSData *data = [PMImageUtil convertToData:image formatType:PMThumbFormatTypeJPEG quality:1.0];
+        NSData *data = [PMImageUtil convertToData:image formatType:PMThumbFormatTypeJPEG quality:0.9];
 
         if (data) {
             NSString *path = [self writeFullFileWithAssetId:asset imageData: data];
