@@ -281,6 +281,6 @@ class PermissionsUtils {
                 PackageManager.GET_PERMISSIONS
             )
         }
-        return packageInfo.requestedPermissions.contains(permission)
+        return packageInfo.requestedPermissions?.contains(permission) ?: false
     }
 }
