@@ -849,7 +849,8 @@
             return;
         }
 
-        NSData *data = [PMImageUtil convertToData:image formatType:PMThumbFormatTypeJPEG quality:1.0];
+        // Carat: 1.0 caused crashes when generating thumbnails of large images
+        NSData *data = [PMImageUtil convertToData:image formatType:PMThumbFormatTypeJPEG quality:0.9];
 
         if (data) {
             NSString *path = [self writeFullFileWithAssetId:asset imageData: data];
