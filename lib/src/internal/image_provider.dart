@@ -92,6 +92,7 @@ class AssetEntityImageProvider extends ImageProvider<AssetEntityImageProvider> {
     AssetEntityImageProvider key,
     ImageDecoderCallback decode,
   ) async {
+    // decode parameter kept for API compatibility but we use instantiateImageCodec directly
     try {
       assert(key == this);
       if (key.entity.type == AssetType.audio ||
@@ -127,7 +128,8 @@ class AssetEntityImageProvider extends ImageProvider<AssetEntityImageProvider> {
       if (data == null) {
         throw StateError('The data of the entity is null: $entity');
       }
-      return (await decode(await ui.ImmutableBuffer.fromUint8List(data))).demux();
+      final buffer = await ui.ImmutableBuffer.fromUint8List(data);
+      return ui.instantiateImageCodecFromBuffer(buffer);
     } catch (e, s) {
       if (kDebugMode) {
         FlutterError.presentError(
