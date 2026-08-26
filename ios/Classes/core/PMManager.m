@@ -1058,7 +1058,17 @@
      completionHandler:^(BOOL success, NSError *error) {
         if (success) {
             [PMLogUtils.sharedInstance info: [NSString stringWithFormat:@"create asset : id = %@", assetId]];
-            block([self getAssetEntity:assetId]);
+            // «제한된 사진 접근(Limited)» 에서는 저장(add)은 되지만, 상위 getAssetEntity: 가
+            // isAuth==NO(Limited 는 Authorized 가 아니므로) 로 nil 을 돌려준다. 그러면 Dart 는
+            // 저장이 됐는데도 «실패» 로 오판한다. withCache: 오버로드는 그 isAuth 가드가 없어
+            // «방금 만든» 에셋을 되읽을 수 있다(앱이 만든 에셋은 Limited 에서도 접근 가능).
+            PMAssetEntity *entity = assetId ? [self getAssetEntity:assetId withCache:YES] : nil;
+            if (entity == nil && assetId != nil) {
+                // 되읽기까지 비어도 success==YES 는 «실제로 저장됨» 이므로 nil(실패) 로 주면
+                // 안 된다 — id 만 담은 최소 엔티티로 성공을 알린다.
+                entity = [PMAssetEntity entityWithId:assetId createDt:0 width:0 height:0 duration:0 type:0];
+            }
+            block(entity);
         } else {
             NSLog(@"create fail, error: %@", error);
             block(nil);
